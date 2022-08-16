@@ -1,5 +1,7 @@
 import 'dart:math';
+import 'package:black_jack/widgets/my_button.dart';
 import 'package:flutter/material.dart';
+import '../widgets/cards_grid_view.dart';
 
 class BlackJackScreen extends StatefulWidget {
   @override
@@ -132,10 +134,12 @@ class _BlackJackScreenState extends State<BlackJackScreen> {
     myCards.add(Image.asset(playersFirstCard!));
     myCards.add(Image.asset(playersSecondCard!));
 
-    playerScore = deckOfCards[playersFirstCard] ?? 0 + deckOfCards[playersSecondCard]!;
+    playerScore =
+        deckOfCards[playersFirstCard] ?? 0 + deckOfCards[playersSecondCard]!;
 
     if (dealerScore <= 14) {
-      String thirdDealersCardKey = playingCards.keys.elementAt(random.nextInt(playingCards.length));
+      String thirdDealersCardKey =
+          playingCards.keys.elementAt(random.nextInt(playingCards.length));
       playingCards.removeWhere((key, value) => key == thirdDealersCardKey);
 
       dealersCards.add(Image.asset(thirdDealersCardKey));
@@ -166,102 +170,61 @@ class _BlackJackScreenState extends State<BlackJackScreen> {
       body: isGameStarted
           ? SafeArea(
               child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  // карты dealers
-                  Column(
-                    children: [
-                      Text(
-                        "Dealer score $dealerScore",
-                        style: TextStyle(
-                            color: dealerScore <= 21
-                                ? Colors.green[900]
-                                : Colors.red[900]),
-                      ),
-                      SizedBox(height: 20),
-                      // Greed view
-                      Container(
-                        height: 200,
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3),
-                          itemCount: dealersCards.length,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: dealersCards[index],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  // карты players
-                  Column(
-                    children: [
-                      Text(
-                        "Player score $playerScore",
-                        style: TextStyle(
-                            color: playerScore <= 21
-                                ? Colors.green[900]
-                                : Colors.red[900]),
-                      ),
-                      SizedBox(height: 20),
-                      // Greed view
-                      Container(
-                        height: 200,
-                        child: GridView.builder(
-                          gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 3),
-                          itemCount: myCards.length,
-                          itemBuilder: (context, index) {
-                            return Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 8.0),
-                              child: myCards[index],
-                            );
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
-                  // 2 buttons
-                  IntrinsicWidth(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    // карты dealers
+                    Column(
                       children: [
-                        MaterialButton(
-                          child: Text("Another Card"),
-                          color: Colors.brown[200],
-                          onPressed: addCard,
+                        Text(
+                          "Dealer score $dealerScore",
+                          style: TextStyle(
+                              color: dealerScore <= 21
+                                  ? Colors.green[900]
+                                  : Colors.red[900]),
                         ),
-                        MaterialButton(
-                          child: Text("Next round"),
-                          color: Colors.brown[200],
-                          onPressed: () {
-                            changeCards();
-                          },
-                        ),
+                        SizedBox(height: 20),
+                        // Greed view
+                        CardsGridView(cards: dealersCards),
                       ],
                     ),
-                  ),
-                ],
+                    // карты players
+                    Column(
+                      children: [
+                        Text(
+                          "Player score $playerScore",
+                          style: TextStyle(
+                              color: playerScore <= 21
+                                  ? Colors.green[900]
+                                  : Colors.red[900]),
+                        ),
+                        SizedBox(height: 20),
+                        // Greed view
+                        CardsGridView(cards: myCards),
+                      ],
+                    ),
+                    // 2 buttons
+                    IntrinsicWidth(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          MyButton(onPressed: addCard, label: "Another Card"),
+                          MyButton(onPressed: changeCards, label: "Next Round"),
+                          // MaterialButton(
+                          //   child: Text("Another Card"),
+                          //   color: Colors.brown[200],
+                          //   onPressed: addCard,
+                          // ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ))
+            )
           : Center(
-              child: MaterialButton(
-                color: Colors.brown[200],
-                onPressed: () {
-                  changeCards();
-                },
-                child: Text("Start Game"),
-              ),
+              child: MyButton(onPressed: changeCards, label: "Start Game"),
             ),
     );
   }
